@@ -1,8 +1,12 @@
 import androidx.compose.ui.unit.dp
+import com.sun.javafx.scene.ImageViewHelper
 import javafx.application.Application
 import javafx.geometry.Pos
 import javafx.scene.Scene
 import javafx.scene.control.Button
+import javafx.scene.control.Hyperlink
+import javafx.scene.image.Image
+import javafx.scene.image.ImageView
 import javafx.scene.layout.BorderPane
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.HBox
@@ -41,6 +45,7 @@ class Gantt : Application() {
 
     }
 
+
     private fun addHBox(): HBox {
         val hBox = HBox()
         hBox.padding = javafx.geometry.Insets(15.0, 12.0, 15.0, 12.0)
@@ -57,12 +62,23 @@ class Gantt : Application() {
 
     private fun addVbox(): VBox {
         val vBox = VBox()
+
         vBox.padding = javafx.geometry.Insets(10.0)
         vBox.spacing = 8.0
 
         val title = Text("Data")
         title.font = Font.font("Arial", FontWeight.BOLD, 14.0)
         vBox.children.add(title)
+        val options = arrayOf(
+            Hyperlink("Sales"),
+            Hyperlink("Marketing"),
+            Hyperlink("Distribution"),
+            Hyperlink("Costs")
+        )
+        for (i in 0 until 4) {
+            VBox.setMargin(options[i], javafx.geometry.Insets(0.0, 0.0, 0.0, 8.0))
+            vBox.children.add(options[i])
+        }
         return vBox
     }
 
@@ -72,8 +88,19 @@ class Gantt : Application() {
         grid.vgap = 10.0
         grid.padding = javafx.geometry.Insets(0.0, 10.0, 0.0, 0.0)
 
+        val category = Text("Sales:")
+        category.font = Font.font("Arial", FontWeight.BOLD, 20.0)
+        grid.add(category, 1, 0)
 
+        val charTitle = Text("Current Year")
+        charTitle.font = Font.font("Arial", FontWeight.BOLD, 20.0)
+        grid.add(charTitle,2,0)
 
+        val chartSubtitle = Text("Goods and Services")
+        grid.add(chartSubtitle,1,1,2,1)
+
+        val imageHouse = ImageView(Image(javaClass.getResourceAsStream("graphics/house.png")))
+        grid.add(imageHouse,0,0,1,2)
         return grid
     }
 
