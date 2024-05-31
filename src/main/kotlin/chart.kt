@@ -1,3 +1,4 @@
+import androidx.compose.animation.slideOutVertically
 import javafx.application.Application
 import javafx.event.EventHandler
 import javafx.scene.Scene
@@ -8,11 +9,15 @@ import javafx.scene.chart.XYChart
 import javafx.scene.layout.Pane
 import javafx.scene.shape.Rectangle
 import javafx.stage.Stage
+import kotlin.math.absoluteValue
 
 class GanttChartExample : Application() {
+
+
     override fun start(primaryStage: Stage) {
         primaryStage.title = "Gantt Chart Example"
-
+        var rectangleWidth = 30.0
+        var rectangleHeight = 10.0
         val xAxis = NumberAxis()
         val yAxis = CategoryAxis()
 
@@ -28,6 +33,7 @@ class GanttChartExample : Application() {
 
         val data1 = mapSeries.map { (entry, value) -> XYChart.Data<Number, String>(value, entry) }
 
+
         //val data1 = XYChart.Data<Number, String>(1, "Task 1")
         // Funktion, um die Werte auf die nächstgelegenen Vielfachen von gridSize zu runden
         fun roundToGrid(value: Double, gridSize: Double): Double {
@@ -35,10 +41,18 @@ class GanttChartExample : Application() {
         }
 
         data1.forEach { data ->
-            val rectangle = Rectangle(30.0, 10.0)
+            val rectangle = Rectangle(rectangleWidth, rectangleHeight)
             var dragDeltaX = 0.0
             var dragDeltaY = 0.0
             val gridSize = 10.0 // Beispielwert für gridSize
+
+            rectangle.widthProperty().addListener { _, _, newValue ->
+                rectangleWidth = newValue.toDouble()
+            }
+
+            rectangle.heightProperty().addListener { _, _, newValue ->
+                rectangleHeight = newValue.toDouble()
+            }
 
             rectangle.onMouseClicked = EventHandler { click ->
                 if (click.clickCount == 2) {
@@ -54,10 +68,13 @@ class GanttChartExample : Application() {
                     // Setze den Drag-Handler für die Positionsänderung zurück
                     rectangle.setOnMouseDragged { mouseEvent ->
                         rectangle.translateX = roundToGrid(mouseEvent.sceneX - dragDeltaX, gridSize)
+                        data.xValue = rectangle.translateX.absoluteValue / 10
+                        print(data.xValue)
                         rectangle.translateY = roundToGrid(mouseEvent.sceneY - dragDeltaY, gridSize)
                     }
                 }
             }
+
 
             rectangle.setOnMousePressed { mouseEvent ->
                 println("Drag Activated")
@@ -77,7 +94,12 @@ class GanttChartExample : Application() {
 
 
 
-
+        data1.forEach { data ->
+            val rectangle = data.node as Rectangle
+            rectangle.translateX =
+                data.xValue.toDouble() * 10 // Multiplizieren Sie mit 10, um die Position auf der X-Achse zu erhöhen
+            data.node = rectangle
+        }
 
 
 
@@ -88,10 +110,13 @@ class GanttChartExample : Application() {
         val scene = Scene(chart, 800.0, 600.0)
         primaryStage.scene = scene
         primaryStage.show()
-    }
-}
 
-// Funktion, um die Werte auf die nächstgelegenen Vielfachen von gridSize zu runden
-fun roundToGrid(value: Double, gridSize: Double): Double {
-    return Math.round(value / gridSize) * gridSize
+
+    }
+
+
+    // Funktion, um die Werte auf die nächstgelegenen Vielfachen von gridSize zu runden
+    fun roundToGrid(value: Double, gridSize: Double): Double {
+        return Math.round(value / gridSize) * gridSize
+    }
 }

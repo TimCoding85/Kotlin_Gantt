@@ -18,5 +18,5 @@ fun window(){
 }
 
 fun main() {
-    Application.launch(Gantt::class.java)
+    Application.launch(GanttChartExample::class.java)
 }
